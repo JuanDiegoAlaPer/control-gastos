@@ -28,10 +28,10 @@ def read_one(id):
 
 @users.post("/")
 def create():
-    post_data=None
+    post_data = None
     
     try:
-        post_data=request.get_json()
+        post_data = request.get_json()
     
     except werkzeug.exceptions.BadRequest as e:
         return {"error":"Post body JSON data not found",
