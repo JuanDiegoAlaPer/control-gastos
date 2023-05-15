@@ -13,7 +13,7 @@ movement = Blueprint("movement",
                  url_prefix="/api/v1/movement")
 
 @movement.get("/income")
-def read_all():
+def read_all_incomes():
     incomes=Income.query.order_by(Income.code).all()
     
     return {"data": incomes_schema.dump(incomes)}, HTTPStatus.OK
@@ -38,9 +38,8 @@ def income():
     
     if not account:
         return {"error": "Wrong account"}, HTTPStatus.UNAUTHORIZED
-
     try:
-        account.balance= (request.get_json().get("balance", account.balance)) + income.balance
+        account.balance = (request.get_json().get("balance", account.balance )) + income.balance
         db.session.add(income)
         db.session.commit()
     
@@ -51,7 +50,7 @@ def income():
     return {"data":income_schema.dump(income)}, HTTPStatus.CREATED
 
 @movement.delete("/income/<int:code>")
-def delete(code):
+def deleteIncome(code):
     income=Income.query.filter_by(code=code).first()
     
     if(not income):
@@ -67,7 +66,7 @@ def delete(code):
     return {"data":""}, HTTPStatus.NO_CONTENT
 
 @movement.get("/income/date")
-def read_by_date_range():
+def read_incomes_by_date_range():
     initial_date = request.args.get("initial_date")
     final_date = request.args.get("final_date")
 
@@ -112,7 +111,7 @@ def expense():
         return {"error": "Wrong account"}, HTTPStatus.UNAUTHORIZED
 
     try:
-        account.balance= (request.get_json().get("balance", account.balance)) + expense.balance
+        account.balance = (request.get_json().get("balance", account.balance + (-expense.balance))) 
         db.session.add(expense)
         db.session.commit()
     

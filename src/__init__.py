@@ -8,6 +8,7 @@ from src.endpoints.providers import providers
 from src.endpoints.users import users
 from src.endpoints.accounts import accounts
 from src.endpoints.auth import auth
+from src.endpoints.movements import movement
 
 
 # def create_app(test_config=None):
@@ -48,6 +49,7 @@ def create_app():
     app.register_blueprint(users)
     app.register_blueprint(accounts)
     app.register_blueprint(auth)
+    app.register_blueprint(movement)
     
     db.init_app(app)
     ma.init_app(app)
