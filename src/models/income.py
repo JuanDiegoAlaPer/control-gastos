@@ -13,10 +13,10 @@ class Income(db.Model):
                         nullable=False)
     
     
-class AccountSchema(ma.SQLAlchemyAutoSchema):
+class IncomeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         #fields = ()
         model = Income
         include_fk = True
-account_schema=AccountSchema()
-accounts_schema=AccountSchema(many=True)
+income_schema=IncomeSchema()
+incomes_schema=IncomeSchema(many=True)

@@ -13,10 +13,10 @@ class Expense(db.Model):
                         nullable=False)
     
     
-class AccountSchema(ma.SQLAlchemyAutoSchema):
+class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         #fields = ()
         model = Expense
         include_fk = True
-account_schema=AccountSchema()
-accounts_schema=AccountSchema(many=True)
+expense_schema=ExpenseSchema()
+expenses_schema=ExpenseSchema(many=True)
