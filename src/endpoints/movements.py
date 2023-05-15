@@ -6,6 +6,8 @@ from src.models.expense import Expense, expense_schema, expenses_schema
 from src.database import db
 import werkzeug
 import sqlalchemy.exc
+from datetime import datetime
+
 
 
 movement = Blueprint("movement",
@@ -66,25 +68,32 @@ def deleteIncome(code):
     return {"data":""}, HTTPStatus.NO_CONTENT
 
 @movement.get("/income/date")
-def read_incomes_by_date_range():
-    initial_date = request.args.get("initial_date")
-    final_date = request.args.get("final_date")
+def read_by_date_range_income():
+    data = request.json
+    initial_date = data.get("initial_date")
+    final_date = data.get("final_date")
 
     if not initial_date or not final_date:
         return {"error": "initial and final date query parameters are required"}, HTTPStatus.BAD_REQUEST
 
     try:
-        incomes = Income.query.filter(Income.create_at.between(initial_date, final_date)).all()
+        initial_date = datetime.strptime(initial_date, "%Y-%m-%d")
+        final_date = datetime.strptime(final_date, "%Y-%m-%d")
     except ValueError:
-        return {"error": "Invalid date format"}, HTTPStatus.BAD_REQUEST
+        return {"error": "Bad date format 'YYYY-MM-DD'."}, HTTPStatus.BAD_REQUEST
+
+    if initial_date > final_date:
+        return {"error": "Initial date cannot be latter than final"}, HTTPStatus.BAD_REQUEST
+
+    incomes = Income.query.filter(Income.create_at.between(initial_date, final_date)).all()
 
     if not incomes:
-        return {"error": "No resources found"}, HTTPStatus.NOT_FOUND
+        return {"error": "incomes not found"}, HTTPStatus.NOT_FOUND
 
     return {"data": incomes_schema.dump(incomes)}, HTTPStatus.OK
 
 @movement.get("/expense")
-def read_all():
+def read_all_expenses():
     expenses=Expense.query.order_by(Expense.code).all()
     
     return {"data": expenses_schema.dump(expenses)}, HTTPStatus.OK
@@ -139,21 +148,29 @@ def delete(code):
 
 @movement.get("/expense/date")
 def read_by_date_range():
-    initial_date = request.args.get("initial_date")
-    final_date = request.args.get("final_date")
+    data = request.json
+    initial_date = data.get("initial_date")
+    final_date = data.get("final_date")
 
     if not initial_date or not final_date:
         return {"error": "initial and final date query parameters are required"}, HTTPStatus.BAD_REQUEST
 
     try:
-        expenses = Expense.query.filter(Expense.create_at.between(initial_date, final_date)).all()
+        initial_date = datetime.strptime(initial_date, "%Y-%m-%d")
+        final_date = datetime.strptime(final_date, "%Y-%m-%d")
     except ValueError:
-        return {"error": "Invalid date format"}, HTTPStatus.BAD_REQUEST
+        return {"error": "Bad date format 'YYYY-MM-DD'."}, HTTPStatus.BAD_REQUEST
+
+    if initial_date > final_date:
+        return {"error": "Initial date cannot be later than final"}, HTTPStatus.BAD_REQUEST
+
+    expenses = Expense.query.filter(Expense.create_at.between(initial_date, final_date)).all()
 
     if not expenses:
-        return {"error": "No resources found"}, HTTPStatus.NOT_FOUND
+        return {"error": "expenses not found"}, HTTPStatus.NOT_FOUND
 
     return {"data": expenses_schema.dump(expenses)}, HTTPStatus.OK
+
 
 
 
