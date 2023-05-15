@@ -75,7 +75,7 @@ def read_by_date_range():
         return {"error": "initial and final date query parameters are required"}, HTTPStatus.BAD_REQUEST
 
     try:
-        incomes = Income.query.filter(Income.fecha.between(initial_date, final_date)).all()
+        incomes = Income.query.filter(Income.create_at.between(initial_date, final_date)).all()
     except ValueError:
         return {"error": "Invalid date format"}, HTTPStatus.BAD_REQUEST
 
@@ -147,7 +147,7 @@ def read_by_date_range():
         return {"error": "initial and final date query parameters are required"}, HTTPStatus.BAD_REQUEST
 
     try:
-        expenses = Expense.query.filter(Expense.fecha.between(initial_date, final_date)).all()
+        expenses = Expense.query.filter(Expense.create_at.between(initial_date, final_date)).all()
     except ValueError:
         return {"error": "Invalid date format"}, HTTPStatus.BAD_REQUEST
 
